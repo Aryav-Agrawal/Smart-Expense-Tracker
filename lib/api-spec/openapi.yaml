@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Smart Expense Tracker API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: expenses
+    description: Expense operations
+  - name: insights
+    description: Insights and analytics
 paths:
   /healthz:
     get:
@@ -24,6 +28,127 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /expenses:
+    get:
+      operationId: listExpenses
+      tags: [expenses]
+      summary: List expenses
+      description: Returns all expenses, optionally filtered by category
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by category
+        - name: month
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by month (YYYY-MM)
+      responses:
+        "200":
+          description: List of expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Expense"
+    post:
+      operationId: addExpense
+      tags: [expenses]
+      summary: Add expense
+      description: Create a new expense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExpenseBody"
+      responses:
+        "201":
+          description: Created expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "400":
+          description: Bad request
+
+  /expenses/{id}:
+    delete:
+      operationId: deleteExpense
+      tags: [expenses]
+      summary: Delete expense
+      description: Delete an expense by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted successfully
+        "404":
+          description: Expense not found
+
+  /expenses/summary:
+    get:
+      operationId: getExpenseSummary
+      tags: [insights]
+      summary: Get expense summary
+      description: Returns total spending, monthly totals, category breakdown, and smart insights
+      parameters:
+        - name: month
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter summary to a specific month (YYYY-MM)
+      responses:
+        "200":
+          description: Expense summary with insights
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseSummary"
+
+  /expenses/budget:
+    get:
+      operationId: getBudget
+      tags: [insights]
+      summary: Get budget
+      description: Returns the current budget limit
+      responses:
+        "200":
+          description: Budget info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Budget"
+    post:
+      operationId: setBudget
+      tags: [insights]
+      summary: Set budget
+      description: Set monthly budget limit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetBudgetBody"
+      responses:
+        "200":
+          description: Updated budget
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Budget"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +159,119 @@ components:
       required:
         - status
 
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+        amount:
+          type: number
+        category:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - amount
+        - category
+        - description
+        - date
+        - createdAt
+
+    CreateExpenseBody:
+      type: object
+      properties:
+        amount:
+          type: number
+        category:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+      required:
+        - amount
+        - category
+        - description
+        - date
+
+    CategoryTotal:
+      type: object
+      properties:
+        category:
+          type: string
+        total:
+          type: number
+        count:
+          type: integer
+      required:
+        - category
+        - total
+        - count
+
+    MonthlyTotal:
+      type: object
+      properties:
+        month:
+          type: string
+        total:
+          type: number
+        count:
+          type: integer
+      required:
+        - month
+        - total
+        - count
+
+    ExpenseSummary:
+      type: object
+      properties:
+        totalSpending:
+          type: number
+        categoryBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryTotal"
+        monthlyTotals:
+          type: array
+          items:
+            $ref: "#/components/schemas/MonthlyTotal"
+        topCategory:
+          type: ["string", "null"]
+        insight:
+          type: ["string", "null"]
+        budgetLimit:
+          type: ["number", "null"]
+        budgetExceeded:
+          type: boolean
+        remainingBudget:
+          type: ["number", "null"]
+      required:
+        - totalSpending
+        - categoryBreakdown
+        - monthlyTotals
+        - topCategory
+        - insight
+        - budgetLimit
+        - budgetExceeded
+        - remainingBudget
+
+    Budget:
+      type: object
+      properties:
+        limit:
+          type: ["number", "null"]
+      required:
+        - limit
+
+    SetBudgetBody:
+      type: object
+      properties:
+        limit:
+          type: number
+      required:
+        - limit
