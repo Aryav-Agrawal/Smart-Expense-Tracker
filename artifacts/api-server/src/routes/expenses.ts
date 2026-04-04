@@ -90,24 +90,21 @@ router.get("/expenses/summary", async (req, res): Promise<void> => {
 
   const { month } = parsed.data;
 
-  // The month used for budget comparison: explicit selection, or current calendar month
+  // Always resolve to a specific month — never use all-time for spending/budget calculations
   const currentMonth = new Date().toISOString().slice(0, 7);
-  const budgetMonth = month ?? currentMonth;
+  const activeMonth = month ?? currentMonth;
 
-  let allExpenses = await db.select().from(expensesTable);
+  const allExpenses = await db.select().from(expensesTable);
 
-  // Expenses shown in the summary (respects the selected month filter or all time)
-  const filteredExpenses = month
-    ? allExpenses.filter((e) => e.date.startsWith(month))
-    : allExpenses;
-
-  const totalSpending = filteredExpenses.reduce(
-    (sum, e) => sum + e.amount,
-    0
+  // Spending stats are scoped to the active month only
+  const monthExpenses = allExpenses.filter((e) =>
+    e.date.startsWith(activeMonth)
   );
 
+  const totalSpending = monthExpenses.reduce((sum, e) => sum + e.amount, 0);
+
   const categoryMap: Record<string, { total: number; count: number }> = {};
-  for (const e of filteredExpenses) {
+  for (const e of monthExpenses) {
     if (!categoryMap[e.category]) {
       categoryMap[e.category] = { total: 0, count: 0 };
     }
@@ -119,6 +116,7 @@ router.get("/expenses/summary", async (req, res): Promise<void> => {
     .map(([category, { total, count }]) => ({ category, total, count }))
     .sort((a, b) => b.total - a.total);
 
+  // Monthly totals always span all months (for the bar chart trend view)
   const monthMap: Record<string, { total: number; count: number }> = {};
   for (const e of allExpenses) {
     const m = e.date.slice(0, 7);
@@ -137,20 +135,16 @@ router.get("/expenses/summary", async (req, res): Promise<void> => {
     categoryBreakdown.length > 0 ? categoryBreakdown[0].category : null;
 
   const insight = topCategory
-    ? `You spent the most on ${topCategory} in ${budgetMonth}`
+    ? `You spent the most on ${topCategory} in ${activeMonth}`
     : "No expenses recorded yet";
 
   const budgetRows = await db.select().from(budgetTable).limit(1);
   const budgetLimit = budgetRows.length > 0 ? budgetRows[0].limit : null;
 
-  // Budget is always evaluated against the budget month (selected or current), never all-time
-  const budgetMonthSpending = allExpenses
-    .filter((e) => e.date.startsWith(budgetMonth))
-    .reduce((sum, e) => sum + e.amount, 0);
-
-  const budgetExceeded = budgetLimit !== null && budgetMonthSpending > budgetLimit;
+  // Budget comparison uses only the active month's spending (same as totalSpending)
+  const budgetExceeded = budgetLimit !== null && totalSpending > budgetLimit;
   const remainingBudget =
-    budgetLimit !== null ? budgetLimit - budgetMonthSpending : null;
+    budgetLimit !== null ? budgetLimit - totalSpending : null;
 
   res.json({
     totalSpending,
