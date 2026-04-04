@@ -46,7 +46,7 @@ export function BudgetCard({ summary }: { summary?: ExpenseSummary }) {
   };
 
   const limit = summary?.budgetLimit || 0;
-  const spent = summary?.totalSpending || 0;
+  const spent = summary?.budgetMonthSpending || 0;
   const remaining = summary?.remainingBudget || 0;
   const percent = limit > 0 ? Math.min((spent / limit) * 100, 100) : 0;
   

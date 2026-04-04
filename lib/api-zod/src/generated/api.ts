@@ -83,6 +83,7 @@ export const GetExpenseSummaryResponse = zod.object({
   topCategory: zod.string().nullable(),
   insight: zod.string().nullable(),
   budgetLimit: zod.number().nullable(),
+  budgetMonthSpending: zod.number(),
   budgetExceeded: zod.boolean(),
   remainingBudget: zod.number().nullable(),
 });

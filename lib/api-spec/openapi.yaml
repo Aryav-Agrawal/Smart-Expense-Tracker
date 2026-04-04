@@ -246,6 +246,8 @@ components:
           type: ["string", "null"]
         budgetLimit:
           type: ["number", "null"]
+        budgetMonthSpending:
+          type: number
         budgetExceeded:
           type: boolean
         remainingBudget:
@@ -257,6 +259,7 @@ components:
         - topCategory
         - insight
         - budgetLimit
+        - budgetMonthSpending
         - budgetExceeded
         - remainingBudget
 

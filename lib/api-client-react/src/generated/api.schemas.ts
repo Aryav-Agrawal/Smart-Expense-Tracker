@@ -47,6 +47,7 @@ export interface ExpenseSummary {
   insight: string | null;
   /** @nullable */
   budgetLimit: number | null;
+  budgetMonthSpending: number;
   budgetExceeded: boolean;
   /** @nullable */
   remainingBudget: number | null;
