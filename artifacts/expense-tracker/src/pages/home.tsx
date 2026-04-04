@@ -9,6 +9,7 @@ import { MonthlySummary } from "@/components/dashboard/monthly-summary";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Wallet } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 export default function Home() {
   const [selectedMonth, setSelectedMonth] = useState<string | undefined>(undefined);
@@ -55,7 +56,7 @@ export default function Home() {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Budget Exceeded</AlertTitle>
             <AlertDescription>
-              You have exceeded your budget limit of ${summary.budgetLimit?.toFixed(2)}. Consider cutting back on expenses.
+              You have exceeded your budget limit of {formatCurrency(summary.budgetLimit ?? 0)}. Consider cutting back on expenses.
             </AlertDescription>
           </Alert>
         )}
