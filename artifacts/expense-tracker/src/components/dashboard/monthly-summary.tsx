@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
 import type { ExpenseSummary } from "@workspace/api-client-react";
+import { formatCurrency } from "@/lib/utils";
 
 export function MonthlySummary({ summary }: { summary?: ExpenseSummary }) {
   const data = summary?.monthlyTotals || [];
@@ -44,13 +45,13 @@ export function MonthlySummary({ summary }: { summary?: ExpenseSummary }) {
                 dy={10}
               />
               <YAxis 
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => formatCurrency(value)}
                 tickLine={false} 
                 axisLine={false} 
                 tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} 
               />
               <Tooltip 
-                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total']}
+                formatter={(value: number) => [formatCurrency(value), 'Total']}
                 cursor={{ fill: "hsl(var(--muted) / 0.5)" }}
                 contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               />

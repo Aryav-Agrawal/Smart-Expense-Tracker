@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useListExpenses, useDeleteExpense, getListExpensesQueryKey, getGetExpenseSummaryQueryKey } from "@workspace/api-client-react";
+import { formatCurrency } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Trash2, Receipt, Loader2, Search } from "lucide-react";
@@ -99,7 +100,7 @@ export function ExpensesTable({ selectedMonth }: ExpensesTableProps) {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      ${expense.amount.toFixed(2)}
+                      {formatCurrency(expense.amount)}
                     </TableCell>
                     <TableCell>
                       <Button

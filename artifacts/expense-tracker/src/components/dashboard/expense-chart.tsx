@@ -1,6 +1,7 @@
 import { PieChart as RechartsChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import type { ExpenseSummary } from "@workspace/api-client-react";
+import { formatCurrency } from "@/lib/utils";
 
 const COLORS = [
   "hsl(var(--chart-1))",
@@ -54,7 +55,7 @@ export function ExpenseChart({ summary }: { summary?: ExpenseSummary }) {
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total']}
+                formatter={(value: number) => [formatCurrency(value), 'Total']}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               />
               <Legend verticalAlign="bottom" height={36} />

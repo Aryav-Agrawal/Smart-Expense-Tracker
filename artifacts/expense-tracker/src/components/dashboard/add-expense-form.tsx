@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { cn, currencySymbol } from "@/lib/utils";
 
 const formSchema = z.object({
   amount: z.coerce.number().positive("Amount must be positive"),
@@ -89,7 +89,7 @@ export function AddExpenseForm() {
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
+                      <span className="absolute left-3 top-2.5 text-muted-foreground">{currencySymbol}</span>
                       <Input type="number" step="0.01" placeholder="0.00" className="pl-7" {...field} value={field.value ?? ""} />
                     </div>
                   </FormControl>

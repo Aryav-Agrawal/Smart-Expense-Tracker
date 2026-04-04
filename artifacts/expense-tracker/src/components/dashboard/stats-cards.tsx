@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingDown, PieChart, Info, CreditCard } from "lucide-react";
 import type { ExpenseSummary } from "@workspace/api-client-react";
+import { formatCurrency } from "@/lib/utils";
 
 export function StatsCards({ summary, isLoading }: { summary?: ExpenseSummary, isLoading: boolean }) {
   if (isLoading) {
@@ -27,7 +28,7 @@ export function StatsCards({ summary, isLoading }: { summary?: ExpenseSummary, i
             </div>
           </div>
           <div className="text-3xl font-bold tracking-tight">
-            ${summary?.totalSpending?.toFixed(2) || "0.00"}
+            {formatCurrency(summary?.totalSpending ?? 0)}
           </div>
         </CardContent>
       </Card>

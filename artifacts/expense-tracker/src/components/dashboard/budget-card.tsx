@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatCurrency, currencySymbol } from "@/lib/utils";
 import { useSetBudget, getGetExpenseSummaryQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +70,7 @@ export function BudgetCard({ summary }: { summary?: ExpenseSummary }) {
         {isEditing ? (
           <div className="flex items-center gap-2 mt-2">
             <div className="relative flex-1">
-              <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-2.5 text-muted-foreground">{currencySymbol}</span>
               <Input 
                 type="number" 
                 value={budgetVal} 
@@ -88,12 +89,12 @@ export function BudgetCard({ summary }: { summary?: ExpenseSummary }) {
           <div className="space-y-4">
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-3xl font-bold">${spent.toFixed(2)}</span>
-                <span className="text-muted-foreground text-sm ml-1">/ ${limit.toFixed(2)}</span>
+                <span className="text-3xl font-bold">{formatCurrency(spent)}</span>
+                <span className="text-muted-foreground text-sm ml-1">/ {formatCurrency(limit)}</span>
               </div>
               <div className="text-right">
                 <span className={`text-sm font-medium ${summary?.budgetExceeded ? 'text-destructive' : 'text-primary'}`}>
-                  ${Math.abs(remaining).toFixed(2)} {summary?.budgetExceeded ? 'over' : 'left'}
+                  {formatCurrency(Math.abs(remaining))} {summary?.budgetExceeded ? 'over' : 'left'}
                 </span>
               </div>
             </div>
