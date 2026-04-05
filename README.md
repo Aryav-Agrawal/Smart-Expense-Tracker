@@ -22,7 +22,12 @@ A full-stack expense tracking application that helps users monitor spending, man
 - Applied currency localization using INR
 
 ## 📸 Screenshots
-(Add screenshots here)
+
+### Dashboard
+![Dashboard](dashboard.png)
+
+### Budget Alert
+![Budget](budget.png)
 
 ## 🔮 Future Improvements
 - User authentication
